@@ -1,0 +1,12 @@
+extends layout
+
+block content
+	.row.mar
+		.threecol.meta
+		.ninecol.wrap-content
+			.document
+				.post-header
+					.post-meta
+						time(datetime="#{date}") #{date}
+				.entry-content
+					include page.html

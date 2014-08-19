@@ -1,0 +1,12 @@
+extends layout
+
+block content
+	.row.mar
+		.threecol.meta
+		.ninecol.wrap_content
+			.document
+				.post-header
+					.post-meta
+						time(datetime="#{lastModify}") #{lastModify}
+				.entry-content
+					include page.html
