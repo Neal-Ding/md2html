@@ -1,0 +1,20 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>全兼容keycode</title>
+	<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+</head>
+<body>
+	<h1>我就说&amp;&amp;一下keycode就好了嘛，全兼容demo哦</h1>
+	<p>禁止ctrl+c</p>
+	<script type="text/javascript">
+	$(document).keydown(function (e) {
+		var evt = e || window.event;
+		if((67 == evt.which) && evt.ctrlKey){
+			alert("stop");
+			evt.preventDefault();
+		}
+	})
+	</script>
+</body>
+</html>
