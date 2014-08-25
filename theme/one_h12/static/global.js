@@ -1,22 +1,31 @@
+function byId (id) {
+    return document.getElementById(id);
+}
+
+function _IE(){
+    var v = 3, div = document.createElement('div'), all = div.getElementsByTagName('i');
+    while (
+        div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+        all[0]
+    );
+    return v > 4 ? v : false ;
+};
+
 function initPage () {        //分状态初始化函数
     $('.entry-content a').each(function (index) {
         if($(this).attr('href').indexOf("#") !== 0){
             $(this).attr('target','_blank');
         }
     })
-    //加入复制到剪贴版按钮
-    $(".highlight").append("<span class='clipbord'>复制到剪贴版</span>");
     //锚点链接自动定位
     if(window.location.hash.length > 0){
         var ua = navigator.userAgent.toLowerCase();
-        var isSafari = (ua.indexOf("chrome") == -1 && ua.indexOf("safari") > 0) ? true : false;
-        var hash = isSafari ? decodeURI(window.location.hash) : window.location.hash;
-        $("html, body").animate({scrollTop: $(hash).offset().top}, 800);
+        var hash = (ua.indexOf("chrome") == -1 && ua.indexOf("safari") > 0) ? decodeURI(window.location.hash).substr(1) : window.location.hash.substr(1);
+
+        $("html, body").animate({scrollTop: $(byId(hash)).offset().top}, 800);
     }
     _sidebarInit();
     _clipInit();
-
-    console.log(isSafari)
 }
 
 function initScroll (ieVer) {        //滚动响应函数
@@ -66,8 +75,6 @@ $(document).ready(function (){
 });
 
 function _sidebarInit () {          //初始化边栏
-    // var autoc = require('arale/autocomplete/1.2.3/autocomplete');
-    // console.log(autoc);
     var titleNodes=$('.document .entry-content').find('h1,h2');
     var sidebar=$('.threecol.meta');
     var htmlStr='';
@@ -144,19 +151,12 @@ function _titleActive(ieVer) {       //边栏标题跟随
     });
 }
 
-function _IE(){
-    var v = 3, div = document.createElement('div'), all = div.getElementsByTagName('i');
-    while (
-        div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
-        all[0]
-    );
-    return v > 4 ? v : false ;
-};
-
 function _clipInit () {         //剪贴板初始化
     if(!!navigator.plugins["Shockwave Flash"]){
+        //加入复制到剪贴版按钮
+        $(".highlight").append("<span class='clipbord'>复制到剪贴版</span>");
         var client = new ZeroClipboard($(".clipbord"), {
-            moviePath: "http://static.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf",
+            moviePath: "https://static.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf",
             hoverClass: "show",
             forceHandCursor: true,
             trustedDomains: ['*']

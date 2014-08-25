@@ -15,14 +15,11 @@ var	gulp = require('gulp');
 
 gulp.task('config', function () {
 	var data = fs.readFileSync('./config.json', 'utf-8');
-	var today = new Date();//获得当前日期
-	var date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
 	opt = JSON.parse(data);
-	opt.date = date;
 	sourcePath = {
 		"css": 'theme/' + opt.theme + '/static/*.css',
 		"script": 'theme/' + opt.theme + '/static/*.js',
-		"template": 'theme/' + opt.theme + '/template/section.jade',
+		"template": 'theme/' + opt.theme + '/template/*.jade',
 		"md": 'source/*.md'
 	};
 })
@@ -37,7 +34,7 @@ gulp.task('css', ['config'], function () {
 gulp.task('script', ['config'], function () {
 	return gulp.src(sourcePath.script)
 		.pipe(concat('page.js'))
-//		.pipe(jsMin())
+		.pipe(jsMin())
 		.pipe(gulp.dest('./target/js/'));
 })
 
@@ -47,11 +44,7 @@ gulp.task('markdown', ['config'], function () {
 
 	return gulp.src(sourcePath.md)
 		.pipe(concat('page.md'))
-		.pipe(markdown({
-			highlight: function (code) {
-				return highlight.highlightAuto(code).value;
-			}
-		}))
+		.pipe(markdown())
 		.pipe(gulp.dest('./theme/' + opt.theme + '/template/'));
 })
 
@@ -60,14 +53,27 @@ gulp.task('template', ['markdown', 'css', 'script'], function () {
 
 	var r4 = /<(h[1-6]).*?>.*?<\/\1>/gi;
 	var r5 = /-\{[^\}]+\}/gi;
+	var r6 = /\@\{[^\}]+\}/gi;
 
-	var resData = orgData.replace(r4, function (w){
-		var level = w.split("<h")[1][0];
-		var content = w.split(">")[1].split("<")[0];
-		var result = "<h" + level + " id=\"" + content + "\">" + content + "</h" + level + ">";
-		return result;
+
+	var resData = orgData.replace(r4, function(w){
+		var tag = w.match(/\<h([^\>]+)\>/gi)[0];
+		var tagNum = tag.match(/\d+/gi)[0];
+		var headingFirstPart = w.split('>')[1].split(' ')[0];
+		var anchor = w.match(r6)[0];
+		var emptyAnchors = w.match(r5);
+
+		var emptyDivStr = '';
+
+		if(emptyAnchors){
+			for(var idx = 0; idx < emptyAnchors.length; idx++){
+				var emptyACon = emptyAnchors[idx].match(/[^-\{\}]+/gi);
+				emptyDivStr += '<div id="'+ emptyACon +'"></div>';
+			}
+		}
+		var heading = '<h'+ tagNum +' id="'+ anchor.match(/[^\@\{\}]+/gi) +'">' + headingFirstPart + '</h'+ tagNum +'>';
+		return emptyDivStr + heading;
 	});
-
 
 	fs.writeFileSync('./theme/' + opt.theme + '/template/page.html', resData, 'utf-8');
 
@@ -81,7 +87,6 @@ gulp.task('template', ['markdown', 'css', 'script'], function () {
 })
 
 gulp.task('watch', function () {
-
 	gulp.watch(sourcePath.css, ['css', 'template']);
 	gulp.watch(sourcePath.script, ['script', 'template']);
 	gulp.watch(sourcePath.template, ['template']);

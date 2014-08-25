@@ -16,7 +16,6 @@ var	gulp = require('gulp');
 gulp.task('config', function () {
 	var data = fs.readFileSync('./config.json', 'utf-8');
 	var today = new Date();//获得当前日期
-	var date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
 	opt = JSON.parse(data);
 	opt.date = date;
 	sourcePath = {
@@ -37,7 +36,7 @@ gulp.task('css', ['config'], function () {
 gulp.task('script', ['config'], function () {
 	return gulp.src(sourcePath.script)
 		.pipe(concat('page.js'))
-//		.pipe(jsMin())
+		.pipe(jsMin())
 		.pipe(gulp.dest('./target/js/'));
 })
 

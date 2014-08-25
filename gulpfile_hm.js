@@ -34,7 +34,7 @@ gulp.task('css', ['config'], function () {
 gulp.task('script', ['config'], function () {
 	return gulp.src(sourcePath.script)
 		.pipe(concat('page.js'))
-//		.pipe(jsMin())
+		.pipe(jsMin())
 		.pipe(gulp.dest('./target/js/'));
 })
 
@@ -44,11 +44,7 @@ gulp.task('markdown', ['config'], function () {
 
 	return gulp.src(sourcePath.md)
 		.pipe(concat('page.md'))
-		.pipe(markdown({
-			highlight: function (code) {
-				return highlight.highlightAuto(code).value;
-			}
-		}))
+		.pipe(markdown())
 		.pipe(gulp.dest('./theme/' + opt.theme + '/template/'));
 })
 

@@ -32,6 +32,10 @@ a {
     text-decoration: none;
 }
 
+a:hover{
+    text-decoration: underline;
+}
+
 h1 {
   font-size: 28px;
 }
@@ -217,6 +221,9 @@ table tr th :last-child, table tr td :last-child {
     list-style: none;
 }
 
+.wrap_content a:hover{
+    text-decoration: underline;
+}
 
 .header-nav {
     width: 100%;
@@ -510,7 +517,6 @@ table tr th :last-child, table tr td :last-child {
 }
 
 .ui-autocomplete-item-hl {
-    /*font-weight: 700;*/
     color: #fd7300;
 }
 
@@ -549,7 +555,6 @@ table tr th :last-child, table tr td :last-child {
 #sidebar-fixed-nav dl{
     margin: 0 0;
     background: #ececec;
-    /*height: 65px;*/
     line-height: 46px;
     min-width:163px;
     width: 100%;
@@ -616,7 +621,6 @@ table tr th :last-child, table tr td :last-child {
 
 #sidebar-wrapper #sidebar-fixed-nav .active dt {
     border-top: 2px solid #bdbdbd;
-    /*border-bottom: solid 1px #bdbdbd;*/
     border-left: solid 5px #fd7300;
     height: 46px;
     line-height: 46px;
@@ -637,15 +641,10 @@ table tr th :last-child, table tr td :last-child {
 
 .sitelink .ui-link {
     display: inline-block;
-    /*padding: 4px 0;*/
-    *display: inline;
-    _display: inline;
 }
 
 .sitelink .ui-link-bottom {
     padding-top: 8px;
-    _padding-top: 15px;
-    *padding-top: 15px;
 }
 
 .sitelink .ui-link-item {
