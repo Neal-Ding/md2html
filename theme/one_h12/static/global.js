@@ -18,10 +18,10 @@ function initPage () {        //分状态初始化函数
         }
     })
     //锚点链接自动定位
-    if(window.location.hash.length > 0){
-        var ua = navigator.userAgent.toLowerCase();
-        var hash = (ua.indexOf("chrome") == -1 && ua.indexOf("safari") > 0) ? decodeURI(window.location.hash).substr(1) : window.location.hash.substr(1);
+    var ua = navigator.userAgent.toLowerCase();
+    var hash = (ua.indexOf("chrome") == -1 && ua.indexOf("safari") > 0) ? decodeURI(window.location.hash).substr(1) : window.location.hash.substr(1);
 
+    if($(byId(hash)).length > 0){
         $("html, body").animate({scrollTop: $(byId(hash)).offset().top}, 800);
     }
     _sidebarInit();
@@ -64,7 +64,7 @@ $(document).ready(function (){
             $(this).next().toggle();
         }
     });
-    $(".highlight pre").mousedown(function () {             //鼠标选择文本
+    $("pre code").mousedown(function () {             //鼠标选择文本
         $(this).siblings(".clipbord").addClass("hide");
     })
     $(document).mouseup(function () {
@@ -154,9 +154,9 @@ function _titleActive(ieVer) {       //边栏标题跟随
 function _clipInit () {         //剪贴板初始化
     if(!!navigator.plugins["Shockwave Flash"]){
         //加入复制到剪贴版按钮
-        $(".highlight").append("<span class='clipbord'>复制到剪贴版</span>");
+        $("pre").append("<span class='clipbord'>复制到剪贴版</span>");
         var client = new ZeroClipboard($(".clipbord"), {
-            moviePath: "https://static.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf",
+            moviePath: "//static.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf",
             hoverClass: "show",
             forceHandCursor: true,
             trustedDomains: ['*']

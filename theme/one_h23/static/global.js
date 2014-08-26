@@ -18,10 +18,10 @@ function initPage () {        //分状态初始化函数
         }
     })
     //锚点链接自动定位
-    if(window.location.hash.length > 0){
-        var ua = navigator.userAgent.toLowerCase();
-        var hash = (ua.indexOf("chrome") == -1 && ua.indexOf("safari") > 0) ? decodeURI(window.location.hash).substr(1) : window.location.hash.substr(1);
+    var ua = navigator.userAgent.toLowerCase();
+    var hash = (ua.indexOf("chrome") == -1 && ua.indexOf("safari") > 0) ? decodeURI(window.location.hash).substr(1) : window.location.hash.substr(1);
 
+    if($(byId(hash)).length > 0){
         $("html, body").animate({scrollTop: $(byId(hash)).offset().top}, 800);
     }
     _sidebarInit();

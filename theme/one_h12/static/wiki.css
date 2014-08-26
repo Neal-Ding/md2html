@@ -114,14 +114,13 @@ pre code {
   border: none;
   background: transparent; }
 
-.highlight pre {
-  background-color: #f8f8f8;
-  border: 1px solid #cccccc;
-  font-size: 13px;
-  line-height: 19px;
-  overflow: auto;
-  padding: 6px 10px;
-  border-radius: 3px; }
+.wrap-content pre{
+    position: relative;
+}
+
+.wrap-content pre:hover .clipbord{
+    visibility: visible;
+}
 
 pre {
   background-color: #f8f8f8;
@@ -216,12 +215,12 @@ table tr th :last-child, table tr td :last-child {
 
 /* wiki theme */
 
-.wrap_content {
+.wrap-content {
     margin: 0;
     list-style: none;
 }
 
-.wrap_content a:hover{
+.wrap-content a:hover{
     text-decoration: underline;
 }
 
@@ -788,12 +787,6 @@ table tr th :last-child, table tr td :last-child {
     opacity: 1;
     font-weight: bold;
     z-index: 99999;
-}
-.highlight{
-    position: relative;
-}
-.highlight:hover .clipbord{
-    visibility: visible;
 }
 .clipbord{
     visibility: hidden;

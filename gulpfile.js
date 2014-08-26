@@ -52,28 +52,37 @@ gulp.task('template', ['markdown', 'css', 'script'], function () {
 	var orgData = fs.readFileSync('./theme/' + opt.theme + '/template/page.html', 'utf-8');
 
 	var r4 = /<(h[1-6]).*?>.*?<\/\1>/gi;
-	var r5 = /-\{[^\}]+\}/gi;
-	var r6 = /\@\{[^\}]+\}/gi;
+    var r5 = /-\{[^\}]+\}/gi;
+    var r6 = /\@\{[^\}]+\}/gi;
+    var replaceHeadingTagReg = /<(h\d)[^<]*>/gi;
+    var replaceHeaderConReg = / *[-\@]\{[^\}]+\}/gi;
 
+    var resData = orgData.replace(r4, function(w){
+        if(w.match(r6)){
+            var anchor = w.match(r6)[0];
+        }
+        var emptyAnchors = w.match(r5);
 
-	var resData = orgData.replace(r4, function(w){
-		var tag = w.match(/\<h([^\>]+)\>/gi)[0];
-		var tagNum = tag.match(/\d+/gi)[0];
-		var headingFirstPart = w.split('>')[1].split(' ')[0];
-		var anchor = w.match(r6)[0];
-		var emptyAnchors = w.match(r5);
+        var emptyDivStr = '';
+        if(emptyAnchors){
+            for(var idx = 0; idx < emptyAnchors.length; idx++){
+                var emptyACon = emptyAnchors[idx].match(/[^-\{\}]+/gi);
+                emptyDivStr += '<div id="'+ emptyACon +'"></div>';
+            }
+        }
 
-		var emptyDivStr = '';
+        if(anchor){
+            w = w.replace(replaceHeadingTagReg, function(word, tag){
+                return '<'+ tag +' id="'+ anchor.match(/[^\@\{\}]+/gi) +'">';
+            });
+        }
 
-		if(emptyAnchors){
-			for(var idx = 0; idx < emptyAnchors.length; idx++){
-				var emptyACon = emptyAnchors[idx].match(/[^-\{\}]+/gi);
-				emptyDivStr += '<div id="'+ emptyACon +'"></div>';
-			}
-		}
-		var heading = '<h'+ tagNum +' id="'+ anchor.match(/[^\@\{\}]+/gi) +'">' + headingFirstPart + '</h'+ tagNum +'>';
-		return emptyDivStr + heading;
-	});
+        w = w.replace(replaceHeaderConReg,function(word){
+            return '';
+        });
+
+        return emptyDivStr + w;
+    });
 
 	fs.writeFileSync('./theme/' + opt.theme + '/template/page.html', resData, 'utf-8');
 
