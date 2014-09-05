@@ -1,17 +1,19 @@
-var	gulp = require('gulp');
-	jade = require('gulp-jade');
-	markdown = require('gulp-markdown');
-	watch = require('gulp-watch');
-	concat = require('gulp-concat');
-	cssMin = require('gulp-minify-css');
-	jsMin = require('gulp-uglify');
-	connect = require('gulp-connect');
-	fs = require('fs');
-	path = require('path');
-	highlight = require('highlight.js')
-	opt = null;
-	sourcePath = null;
+'use strict';
 
+var	gulp = require('gulp'),
+	jade = require('gulp-jade'),
+	markdown = require('gulp-markdown'),
+	watch = require('gulp-watch'),
+	concat = require('gulp-concat'),
+	cssMin = require('gulp-minify-css'),
+	jsMin = require('gulp-uglify'),
+	connect = require('gulp-connect'),
+	fs = require('fs'),
+	path = require('path'),
+	getLatesetMdByDir = require('./lib/util').getLatesetMdByDir,
+	highlight = require('highlight.js'),
+	opt = null,
+	sourcePath = null;
 
 gulp.task('config', function () {
 	var data = fs.readFileSync('./config.json', 'utf-8');
@@ -45,48 +47,7 @@ gulp.task('markdown', ['config'], function () {
 	return gulp.src(sourcePath.md)
 		.pipe(concat('page.md'))
 		.pipe(markdown())
-		.pipe(gulp.dest('./theme/' + opt.theme + '/template/'));
-})
-
-gulp.task('template', ['markdown', 'css', 'script'], function () {
-	var orgData = fs.readFileSync('./theme/' + opt.theme + '/template/page.html', 'utf-8');
-
-	var r4 = /<(h[1-6]).*?>.*?<\/\1>/gi;
-    var r5 = /-\{[^\}]+\}/gi;
-    var r6 = /\@\{[^\}]+\}/gi;
-    var replaceHeadingTagReg = /<(h\d)[^<]*>/gi;
-    var replaceHeaderConReg = / *[-\@]\{[^\}]+\}/gi;
-
-    var resData = orgData.replace(r4, function(w){
-        if(w.match(r6)){
-            var anchor = w.match(r6)[0];
-        }
-        var emptyAnchors = w.match(r5);
-
-        var emptyDivStr = '';
-        if(emptyAnchors){
-            for(var idx = 0; idx < emptyAnchors.length; idx++){
-                var emptyACon = emptyAnchors[idx].match(/[^-\{\}]+/gi);
-                emptyDivStr += '<div id="'+ emptyACon +'"></div>';
-            }
-        }
-
-        if(anchor){
-            w = w.replace(replaceHeadingTagReg, function(word, tag){
-                return '<'+ tag +' id="'+ anchor.match(/[^\@\{\}]+/gi) +'">';
-            });
-        }
-
-        w = w.replace(replaceHeaderConReg,function(word){
-            return '';
-        });
-
-        return emptyDivStr + w;
-    });
-
-	fs.writeFileSync('./theme/' + opt.theme + '/template/page.html', resData, 'utf-8');
-
-	return gulp.src(sourcePath.template)
+		.pipe(cacheFilename())
 		.pipe(jade({
 			locals: opt,
 			pretty: true
@@ -96,10 +57,10 @@ gulp.task('template', ['markdown', 'css', 'script'], function () {
 })
 
 gulp.task('watch', function () {
-	gulp.watch(sourcePath.css, ['css', 'template']);
-	gulp.watch(sourcePath.script, ['script', 'template']);
-	gulp.watch(sourcePath.template, ['template']);
-	gulp.watch(sourcePath.md, ['template']);
+	gulp.watch(sourcePath.css, ['css', 'markdown']);
+	gulp.watch(sourcePath.script, ['script', 'markdown']);
+	gulp.watch(sourcePath.template, ['markdown']);
+	gulp.watch(sourcePath.md, ['markdown']);
 })
 
 gulp.task('connect', function() {
@@ -109,24 +70,4 @@ gulp.task('connect', function() {
 	});
 });
 
-gulp.task('default', ['config', 'css', 'script', 'template', 'watch', 'connect'])
-
-function getLatesetMdByDir (dir) {
-	if(dir.charAt(dir.length - 1) !== '/'){
-		dir = dir.concat("/");
-	}
-	var files = fs.readdirSync(dir);
-	var statue = {};
-	for (var i = 0; i < files.length; i++) {
-		var itemStatue = fs.statSync(dir + files[i]);
-		//path.extname won't detect whether the path link to a file or not
-		if(itemStatue.isFile() && (path.extname(files[i]) === ".md")){
-			if(!statue.LatestTime || (statue.LatestTime.getTime() < itemStatue.mtime.getTime())){
-				statue.LatestItem = files[i];
-				statue.LatestTime = itemStatue.mtime;
-			}
-		}
-	};
-	statue.LatestTime = statue.LatestTime.getFullYear() + "-" + (statue.LatestTime.getMonth() + 1) + "-" + statue.LatestTime.getDate();
-	return statue;
-}
+gulp.task('default', ['config', 'css', 'script', 'watch', 'connect']);

@@ -156,7 +156,7 @@ function _clipInit () {         //剪贴板初始化
         //加入复制到剪贴版按钮
         $("pre").append("<span class='clipbord'>复制到剪贴版</span>");
         var client = new ZeroClipboard($(".clipbord"), {
-            moviePath: "//static.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf",
+            moviePath: "//a.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf?noCache=1409909828475",
             hoverClass: "show",
             forceHandCursor: true,
             trustedDomains: ['*']

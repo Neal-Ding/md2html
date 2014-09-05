@@ -465,10 +465,6 @@ table tr th :last-child, table tr td :last-child {
     font-size: 26px;
 }
 
-.post-header {
-    overflow: hidden;
-}
-
 #comment {
     margin-top: 30px;
 }
