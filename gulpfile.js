@@ -11,6 +11,7 @@ var	gulp = require('gulp'),
 	fs = require('fs'),
 	path = require('path'),
 	getLatesetMdByDir = require('./lib/util').getLatesetMdByDir,
+	covertMD = require('./lib/covert').covertMD,
 	highlight = require('highlight.js'),
 	opt = null,
 	sourcePath = null;
@@ -24,44 +25,45 @@ gulp.task('config', function () {
 		"template": 'theme/' + opt.theme + '/template/*.jade',
 		"md": 'source/*.md'
 	};
-})
+});
 
 gulp.task('css', ['config'], function () {
 	return gulp.src(sourcePath.css)
 		.pipe(concat('page.css'))
 		.pipe(cssMin())
 		.pipe(gulp.dest('./target/css/'));
-})
+});
 
 gulp.task('script', ['config'], function () {
 	return gulp.src(sourcePath.script)
 		.pipe(concat('page.js'))
 		.pipe(jsMin())
 		.pipe(gulp.dest('./target/js/'));
-})
+});
 
-gulp.task('markdown', ['config'], function () {
-	var latest = getLatesetMdByDir(path.dirname(sourcePath.md))
+gulp.task('markdown', ['config', 'css', 'script'], function () {
+	var latest = getLatesetMdByDir(path.dirname(sourcePath.md));
 	opt.lastModify = latest.LatestTime;
 
-	return gulp.src(sourcePath.md)
+	gulp.src(sourcePath.md)
 		.pipe(concat('page.md'))
-		.pipe(markdown())
-		.pipe(cacheFilename())
+		.pipe(markdown());
+
+	return gulp.src(sourcePath.template)
 		.pipe(jade({
 			locals: opt,
 			pretty: true
 		}))
 		.pipe(gulp.dest('./target/html/'))
 		.pipe(connect.reload());
-})
+});
 
 gulp.task('watch', function () {
 	gulp.watch(sourcePath.css, ['css', 'markdown']);
 	gulp.watch(sourcePath.script, ['script', 'markdown']);
 	gulp.watch(sourcePath.template, ['markdown']);
 	gulp.watch(sourcePath.md, ['markdown']);
-})
+});
 
 gulp.task('connect', function() {
 	connect.server({
@@ -70,4 +72,4 @@ gulp.task('connect', function() {
 	});
 });
 
-gulp.task('default', ['config', 'css', 'script', 'watch', 'connect']);
+gulp.task('default', ['config', 'css', 'script', 'markdown', 'watch', 'connect']);
