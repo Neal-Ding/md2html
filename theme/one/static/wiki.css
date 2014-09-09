@@ -114,9 +114,6 @@ pre code {
 .wrap-content pre {
     position:relative;
 }
-.wrap-content pre:hover .clipbord {
-    visibility:visible;
-}
 pre {
     background-color:#f8f8f8;
     border:1px solid #cccccc;
@@ -722,6 +719,11 @@ table tr th:last-child,table tr td:last-child {
     background-color:#ccc;
     border-radius:7px;
     box-shadow:0 0 2px #ccc;
+}
+pre:hover .clipbord{
+    visibility: visible;
+    zoom: 1;
+    overflow: hidden;
 }
 .show {
     visibility:visible !important;

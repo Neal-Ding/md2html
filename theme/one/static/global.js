@@ -2,21 +2,14 @@ function byId (id) {
     return document.getElementById(id);
 }
 
-function _IE(){
-    var v = 3, div = document.createElement('div'), all = div.getElementsByTagName('i');
-    while (
-        div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
-        all[0]
-    );
-    return v > 4 ? v : false ;
-};
-
 function initPage () {        //分状态初始化函数
     $('.entry-content a').each(function (index) {
         if($(this).attr('href').indexOf("#") !== 0){
             $(this).attr('target','_blank');
         }
-    })
+    });
+    //加入复制到剪贴版按钮
+    $("pre").append("<span class='clipbord'>复制到剪贴版</span>");
     //锚点链接自动定位
     var ua = navigator.userAgent.toLowerCase();
     var hash = (ua.indexOf("chrome") == -1 && ua.indexOf("safari") > 0) ? decodeURI(window.location.hash).substr(1) : window.location.hash.substr(1);
@@ -28,17 +21,16 @@ function initPage () {        //分状态初始化函数
     _clipInit();
 }
 
-function initScroll (ieVer) {        //滚动响应函数
+function initScroll () {        //滚动响应函数
     var scrollTop = $(window).scrollTop();
-    _titleActive(ieVer);
+    _titleActive();
     _elFixed(scrollTop);
 }
 
 
 $(document).ready(function (){
-    var ieVer = _IE();
     initPage();
-    initScroll(ieVer);
+    initScroll();
     $(window).scroll(function(){
         if($(window).width() > 640){
             initScroll();
@@ -66,29 +58,29 @@ $(document).ready(function (){
     });
     $("pre code").mousedown(function () {             //鼠标选择文本
         $(this).siblings(".clipbord").addClass("hide");
-    })
+    });
     $(document).mouseup(function () {
-        if (document.getSelection && jQuery.trim(document.getSelection().toString()) == "") {
+        if (document.getSelection && jQuery.trim(document.getSelection().toString()).length === 0) {
             $(".clipbord").removeClass("hide");
-        };
+        }
     });
 });
 
 function _sidebarInit () {          //初始化边栏
-    var titleNodes=$('.document .entry-content').find('h1,h2');
+    var titleNodes=$('.document .entry-content').find('h2,h3');
     var sidebar=$('.threecol.meta');
     var htmlStr='';
     htmlStr+='<div id="sidebar-wrapper">';
     htmlStr+='<div id="sidebar-fixed-nav">';
     titleNodes.each(function(index){
-        if($(this).attr('id') && $(this).is("h1")){
+        if($(this).attr('id') && $(this).is("h2")){
             if(index!==0){
                 htmlStr+='</dl>';
             }
             htmlStr+='<dl>';
             htmlStr+=('<dt data-index="'+index+'"><a href="#'+$(this).attr('id')+'">' +$(this).text()+'</a></dt>');
         }
-        else if($(this).attr('id') && $(this).is("h2")){
+        else if($(this).attr('id') && $(this).is("h3")){
             htmlStr+=('<dd data-index="'+index+'"><a href="#'+$(this).attr('id')+'">' +$(this).text()+'</a></dd>');
         }
     });
@@ -126,23 +118,21 @@ function _elFixed (scroT) {       //导航栏与边栏自动定位
     }
 }
 
-function _titleActive(ieVer) {       //边栏标题跟随
-    var titleNodes=$('.document .entry-content').find('h1,h2');
+function _titleActive() {       //边栏标题跟随
+    var titleNodes=$('.document .entry-content').find('h2,h3');
     var sidebar=$('.threecol.meta');
-    if(!!ieVer && (ieVer <= 8)){
-        sidebar.find("dl").addClass('active');
-    }
+
     titleNodes.each(function(index){
-        if(this.getBoundingClientRect().bottom > 17 && this.getBoundingClientRect().top < window.innerHeight){
+        if(this.getBoundingClientRect().bottom > 17 && this.getBoundingClientRect().top < $(window).innerHeight()){
             var curNode=sidebar.find('[data-index="'+index+'"]');
             curNode.closest('dl').siblings('dl').removeClass('active');
             curNode.closest('dl').addClass('active');
             curNode.closest('dl').find('dd').removeClass('active');
             switch(this.nodeName.toUpperCase()){
-                case 'H1':
+                case 'H2':
                     curNode.closest('dl').find('dd').eq(0).addClass('active');
                     break;
-                case 'H2':
+                case 'H3':
                     curNode.addClass('active');
                     break;
             }
@@ -152,29 +142,26 @@ function _titleActive(ieVer) {       //边栏标题跟随
 }
 
 function _clipInit () {         //剪贴板初始化
-    if(!!navigator.plugins["Shockwave Flash"]){
-        //加入复制到剪贴版按钮
-        $("pre").append("<span class='clipbord'>复制到剪贴版</span>");
-        var client = new ZeroClipboard($(".clipbord"), {
-            moviePath: "//a.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf?noCache=1409909828475",
-            hoverClass: "show",
-            forceHandCursor: true,
-            trustedDomains: ['*']
+    var client = new ZeroClipboard($(".clipbord"), {
+        moviePath: "//a.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf?noCache=1409909828475",
+        hoverClass: "show",
+        forceHandCursor: true,
+        trustedDomains: ['*']
+    });
+    client.on('load', function(client) {
+        client.on('datarequested', function(client) {
+            client.setText($(this).prev().text());
         });
-        client.on('load', function(client) {
-            client.on('datarequested', function(client) {
-                client.setText($(this).prev().text());
-            });
-            client.on('complete', function(client, args) {
-                var t = $(this);
-                t.html("复制成功");
-                setTimeout(function () {
-                    t.html("复制到剪贴版");
-                }, 3000);
-            });
+        client.on('complete', function(client, args) {
+            var t = $(this);
+            t.html("复制成功");
+            setTimeout(function () {
+                t.html("复制到剪贴版");
+            }, 3000);
         });
-        client.on('wrongflash noflash', function() {
-            ZeroClipboard.destroy();
-        });
-    }
+    });
+    client.on('wrongflash noflash', function() {
+        ZeroClipboard.destroy();
+        $("span.clipbord").remove();
+    });
 }

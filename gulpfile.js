@@ -45,10 +45,14 @@ gulp.task('markdown', ['config', 'css', 'script'], function () {
 	var latest = getLatesetMdByDir(path.dirname(sourcePath.md));
 	opt.lastModify = latest.LatestTime;
 
-	gulp.src(sourcePath.md)
+	return gulp.src(sourcePath.md)
 		.pipe(concat('page.md'))
-		.pipe(markdown());
+		.pipe(markdown())
+		.pipe(covertMD())
+		.pipe(gulp.dest('theme/' + opt.theme + '/template'));
+});
 
+gulp.task('template', ['markdown'], function () {
 	return gulp.src(sourcePath.template)
 		.pipe(jade({
 			locals: opt,
@@ -56,13 +60,12 @@ gulp.task('markdown', ['config', 'css', 'script'], function () {
 		}))
 		.pipe(gulp.dest('./target/html/'))
 		.pipe(connect.reload());
-});
-
+})
 gulp.task('watch', function () {
-	gulp.watch(sourcePath.css, ['css', 'markdown']);
-	gulp.watch(sourcePath.script, ['script', 'markdown']);
-	gulp.watch(sourcePath.template, ['markdown']);
-	gulp.watch(sourcePath.md, ['markdown']);
+	gulp.watch(sourcePath.css, ['css', 'template']);
+	gulp.watch(sourcePath.script, ['script', 'template']);
+	gulp.watch(sourcePath.template, ['template']);
+	gulp.watch(sourcePath.md, ['markdown', 'template']);
 });
 
 gulp.task('connect', function() {
@@ -72,4 +75,4 @@ gulp.task('connect', function() {
 	});
 });
 
-gulp.task('default', ['config', 'css', 'script', 'markdown', 'watch', 'connect']);
+gulp.task('default', ['config', 'css', 'script', 'markdown', 'template', 'watch', 'connect']);
