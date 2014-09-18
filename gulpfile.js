@@ -2,16 +2,15 @@
 
 var	gulp = require('gulp'),
 	jade = require('gulp-jade'),
-	markdown = require('gulp-markdown'),
+	path = require('path'),
 	watch = require('gulp-watch'),
 	concat = require('gulp-concat'),
 	cssMin = require('gulp-minify-css'),
 	jsMin = require('gulp-uglify'),
 	connect = require('gulp-connect'),
 	fs = require('fs'),
-	path = require('path'),
-	getLatesetMdByDir = require('./lib/util').getLatesetMdByDir,
-	covertMD = require('./lib/covert').covertMD,
+	getNewestFile = require('./lib/util').getNewestFile,
+	covertTo = require('./lib/covert').covertTo,
 	highlight = require('highlight.js'),
 	opt = null,
 	sourcePath = null;
@@ -22,8 +21,7 @@ gulp.task('config', function () {
 	sourcePath = {
 		"css": 'theme/' + opt.theme + '/static/*.css',
 		"script": 'theme/' + opt.theme + '/static/*.js',
-		"template": 'theme/' + opt.theme + '/template/*.jade',
-		"md": 'source/*.md'
+		"md": 'source/**/*.md'
 	};
 });
 
@@ -42,30 +40,26 @@ gulp.task('script', ['config'], function () {
 });
 
 gulp.task('markdown', ['config', 'css', 'script'], function () {
-	var latest = getLatesetMdByDir(path.dirname(sourcePath.md));
+	var latest = getNewestFile("md", ".md");
 	opt.lastModify = latest.LatestTime;
 
 	return gulp.src(sourcePath.md)
-		.pipe(concat('page.md'))
-		.pipe(markdown())
-		.pipe(covertMD())
-		.pipe(gulp.dest('theme/' + opt.theme + '/template'));
-});
-
-gulp.task('template', ['markdown'], function () {
-	return gulp.src(sourcePath.template)
+		.pipe(covertTo("template", opt.theme))
 		.pipe(jade({
+			basedir: path.resolve('./'),
 			locals: opt,
 			pretty: true
 		}))
+		.pipe(covertTo("anchor"))
 		.pipe(gulp.dest('./target/html/'))
 		.pipe(connect.reload());
-})
+});
+
 gulp.task('watch', function () {
-	gulp.watch(sourcePath.css, ['css', 'template']);
-	gulp.watch(sourcePath.script, ['script', 'template']);
-	gulp.watch(sourcePath.template, ['template']);
-	gulp.watch(sourcePath.md, ['markdown', 'template']);
+	gulp.watch(sourcePath.css, ['css', 'markdown']);
+	gulp.watch(sourcePath.script, ['script', 'markdown']);
+	gulp.watch(sourcePath.section, ['markdown']);
+	gulp.watch(sourcePath.md, ['markdown']);
 });
 
 gulp.task('connect', function() {
@@ -75,4 +69,4 @@ gulp.task('connect', function() {
 	});
 });
 
-gulp.task('default', ['config', 'css', 'script', 'markdown', 'template', 'watch', 'connect']);
+gulp.task('default', ['config', 'css', 'script', 'markdown', 'watch', 'connect']);

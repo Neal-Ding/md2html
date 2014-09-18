@@ -20,6 +20,12 @@ img {
     max-width:100%;
     border:none;
 }
+body > *:first-child {
+    margin-top:0 !important;
+}
+body > *:last-child {
+    margin-bottom:0 !important;
+}
 a {
     color:#ee7300;
     text-decoration:none;
@@ -32,6 +38,7 @@ h1 {
 }
 h2 {
     font-size:24px;
+    border-bottom:1px solid #cccccc;
 }
 h3 {
     font-size:18px;

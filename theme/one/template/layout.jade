@@ -18,9 +18,15 @@ html
 				span #{config.sitename}
 			.header-nav
 				.navigation.row-n
-
-		block content
-			
+		.row.mar
+			.threecol.meta
+			.ninecol.wrap-content
+				.document
+					.post-header
+						.post-meta
+							time(datetime="#{lastModify}") #{lastModify}
+					.entry-content
+						block content
 		.footer
 			.grid-990.sitelink.fn-clear
 				ul.ui-link.fn-clear
