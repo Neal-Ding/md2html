@@ -8,16 +8,13 @@ var	gulp = require('gulp'),
 	cssMin = require('gulp-minify-css'),
 	jsMin = require('gulp-uglify'),
 	connect = require('gulp-connect'),
-	fs = require('fs'),
-	getNewestFile = require('./lib/util').getNewestFile,
-	covertTo = require('./lib/covert').covertTo,
+	util = require('./lib/util'),
+	covertTo = require('./lib/covertTo'),
 	highlight = require('highlight.js'),
-	opt = null,
+	opt = require('./config.json'),
 	sourcePath = null;
 
 gulp.task('config', function () {
-	var data = fs.readFileSync('./config.json', 'utf-8');
-	opt = JSON.parse(data);
 	sourcePath = {
 		"css": 'theme/' + opt.theme + '/static/*.css',
 		"script": 'theme/' + opt.theme + '/static/*.js',
@@ -40,7 +37,7 @@ gulp.task('script', ['config'], function () {
 });
 
 gulp.task('markdown', ['config', 'css', 'script'], function () {
-	var latest = getNewestFile("md", ".md");
+	var latest = util.getNewestFile("source", ".md");
 	opt.lastModify = latest.LatestTime;
 
 	return gulp.src(sourcePath.md)
