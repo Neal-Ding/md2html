@@ -1,12 +1,9 @@
 'use strict';
 
 var	gulp = require('gulp'),
-	jade = require('gulp-jade'),
 	path = require('path'),
 	watch = require('gulp-watch'),
 	concat = require('gulp-concat'),
-	cssMin = require('gulp-minify-css'),
-	jsMin = require('gulp-uglify'),
 	connect = require('gulp-connect'),
 	util = require('./lib/util'),
 	covertTo = require('./lib/covertTo'),
@@ -25,14 +22,14 @@ gulp.task('config', function () {
 gulp.task('css', ['config'], function () {
 	return gulp.src(sourcePath.css)
 		.pipe(concat('page.css'))
-		.pipe(cssMin())
+		.pipe(util.cssMin())
 		.pipe(gulp.dest('./target/css/'));
 });
 
 gulp.task('script', ['config'], function () {
 	return gulp.src(sourcePath.script)
 		.pipe(concat('page.js'))
-		.pipe(jsMin())
+		.pipe(util.jsMin())
 		.pipe(gulp.dest('./target/js/'));
 });
 
@@ -42,7 +39,7 @@ gulp.task('markdown', ['config', 'css', 'script'], function () {
 
 	return gulp.src(sourcePath.md)
 		.pipe(covertTo("template", opt.theme))
-		.pipe(jade({
+		.pipe(util.jade({
 			basedir: path.resolve('./'),
 			locals: opt,
 			pretty: true
