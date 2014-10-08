@@ -52,7 +52,6 @@ gulp.task('markdown', ['config', 'css', 'script'], function () {
 gulp.task('watch', function () {
 	gulp.watch(sourcePath.css, ['css', 'markdown']);
 	gulp.watch(sourcePath.script, ['script', 'markdown']);
-	gulp.watch(sourcePath.section, ['markdown']);
 	gulp.watch(sourcePath.md, ['markdown']);
 });
 
