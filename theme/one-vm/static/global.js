@@ -67,20 +67,20 @@ $(document).ready(function (){
 });
 
 function _sidebarInit () {          //初始化边栏
-    var titleNodes=$('.document .entry-content').find('h2,h3');
+    var titleNodes=$('.document .entry-content').find('h1,h2');
     var sidebar=$('.threecol.meta');
     var htmlStr='';
     htmlStr+='<div id="sidebar-wrapper">';
     htmlStr+='<div id="sidebar-fixed-nav">';
     titleNodes.each(function(index){
-        if($(this).attr('id') && $(this).is("h2")){
+        if($(this).attr('id') && $(this).is("h1")){
             if(index!==0){
                 htmlStr+='</dl>';
             }
             htmlStr+='<dl>';
             htmlStr+=('<dt data-index="'+index+'"><a href="#'+$(this).attr('id')+'">' +$(this).text()+'</a></dt>');
         }
-        else if($(this).attr('id') && $(this).is("h3")){
+        else if($(this).attr('id') && $(this).is("h2")){
             htmlStr+=('<dd data-index="'+index+'"><a href="#'+$(this).attr('id')+'">' +$(this).text()+'</a></dd>');
         }
     });
@@ -119,7 +119,7 @@ function _elFixed (scroT) {       //导航栏与边栏自动定位
 }
 
 function _titleActive() {       //边栏标题跟随
-    var titleNodes=$('.document .entry-content').find('h2,h3');
+    var titleNodes=$('.document .entry-content').find('h1,h2');
     var sidebar=$('.threecol.meta');
 
     titleNodes.each(function(index){
@@ -129,10 +129,10 @@ function _titleActive() {       //边栏标题跟随
             curNode.closest('dl').addClass('active');
             curNode.closest('dl').find('dd').removeClass('active');
             switch(this.nodeName.toUpperCase()){
-                case 'H2':
+                case 'H1':
                     curNode.closest('dl').find('dd').eq(0).addClass('active');
                     break;
-                case 'H3':
+                case 'H2':
                     curNode.addClass('active');
                     break;
             }
