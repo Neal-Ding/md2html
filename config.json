@@ -1,8 +1,6 @@
 {
 	"config": {
-		"sitename": "服务窗平台开发者文档",
-		"sideTitle": "h2",
-		"sideSubTitle": "h3"
+		"sitename": "服务窗平台开发者文档"
 	},
 	"theme": "one-vm"
 }
