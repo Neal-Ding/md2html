@@ -143,7 +143,7 @@ function _titleActive() {       //边栏标题跟随
 
 function _clipInit () {         //剪贴板初始化
     var client = new ZeroClipboard($(".clipbord"), {
-        moviePath: "//a.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf?noCache=1409909828475",
+        moviePath: "https://a.alipayobjects.com/gallery/zeroclipboard/1.3.5/ZeroClipboard.swf",
         hoverClass: "show",
         forceHandCursor: true,
         trustedDomains: ['*']
