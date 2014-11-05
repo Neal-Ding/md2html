@@ -58,8 +58,10 @@ gulp.task('watch', function () {
 gulp.task('connect', function() {
 	connect.server({
 		root: 'target/html/',
-		livereload: true
+		livereload: true,
+		port: 8080
 	});
+	util.openURL('http://localhost:8080/');
 });
 
 gulp.task('default', ['config', 'css', 'script', 'markdown', 'watch', 'connect']);
