@@ -1,0 +1,44 @@
+/*------------base----------------*/
+*{
+	margin: 0;
+	padding: 0;
+}
+a{
+	text-decoration: none;
+}
+area{
+	outline: none;
+}
+img {
+	max-width: 100%;
+	border: none;
+	vertical-align: middle;
+}
+table{
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+textarea, input{
+	outline: none;
+}
+ul li, ol li{
+	list-style: none;
+}
+h1, h2, h3, h4, h5, h6{
+	font: 14px/100% "Microsoft Yahei", Arial, sans-serif;
+	text-align: left;
+}
+blockquote, q {
+	quotes: none;
+}
+body{
+	font: 14px/100% "Microsoft Yahei", Arial, Helvetica, sans-serif;
+	position: relative;
+	z-index: 100;
+}
+del{
+	text-decoration: line-through;
+}
+input{
+	border-collapse: separate;
+}

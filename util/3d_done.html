@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>transform-style</title>
+<style>
+*{padding:0; margin:0;}
+#container {
+	-webkit-perspective: 500;
+}
+#roll3D {
+	width: 200px;
+	height: 200px;
+	margin: 100px auto;
+	position: relative;
+	opacity: 0.8;
+	-webkit-transform-style: preserve-3d;
+}
+#roll3D li {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200px;
+	height: 200px;
+	background-color: #333;
+	list-style: none;
+	font-size: 200px;
+	line-height: 1em;
+	text-align: center;
+	color: #fff;
+}
+#roll3D.piece li{
+	backface-visibility: hidden;
+}
+</style>
+<script>
+//组成多边形闭环
+function _makeRoll (obj, num) {
+	//默认生成四面体，最少两面
+	num = (parseInt(num, 0) > 1) ? parseInt(num, 0) : 4;
+	//中心分内角
+	obj.degree = 360 / num;
+	//内径
+	obj.r = parseInt(window.getComputedStyle(obj, null).width, 0) / 2 / Math.tan(Math.PI / num);
+	//两面体转动会频闪，要加入背向隐藏，Math.tan并不存在，要手动指定
+	if(num === 2){
+		obj.className += "piece";
+		obj.r = 0;
+	}
+	//组成多边形闭环
+	for (var i = 0; i < num; i++) {
+		var oLi = document.createElement('li');
+		oLi.innerHTML = i;
+		oLi.style.webkitTransform = 'rotateY(' + obj.degree * i + 'deg)';
+		oLi.style.webkitTransformOrigin = '50% 50% ' + -obj.r + 'px';
+		obj.appendChild(oLi);
+	}
+	//以后移后的中心为原点旋转
+	obj.style.webkitTransformOrigin = '50% 50% ' + -obj.r + 'px';
+}
+
+/**
+ * 可控时旋转
+ * @param  {Object} obj			容器对象
+ * @param  {Number} num			生成指定面体(默认为4)
+ * @param  {Number} showSec		展示时间(默认为0)
+ * @param  {Number} rollSec		滚动时间(默认为0)
+ * @param  {Bool} direction		转动方向(默认为向左)
+ */
+function roll3D (obj, num, showSec, rollSec, direction) {
+	obj.innerHTML = '<ul id="roll3D"></ul>';
+	obj = document.getElementById('roll3D');
+	_makeRoll(obj, num);
+	showSec = (parseInt(showSec, 0) > 0) ? parseInt(showSec, 0) : 0;
+	rollSec = (parseInt(rollSec, 0) > 0) ? parseInt(rollSec, 0) : 0;
+	//构建动画序列
+	var sFrames = '';
+	//控制方向
+	obj.degree = (direction === true) ? -obj.degree : obj.degree;
+	for (var i = 0; i < obj.children.length; i++) {
+		sFrames += 100 / obj.children.length * i + '% {-webkit-transform: rotateY(' + -obj.degree * i + 'deg)} ' + (100 / obj.children.length * (i + showSec / (showSec + rollSec))) + '% {-webkit-transform: rotateY(' + -obj.degree * i + 'deg)} ';
+	}
+	//动画序列补尾
+	sFrames += '100% {-webkit-transform: rotateY(' + -obj.degree * i + 'deg)}';
+	obj.style.webkitAnimation = 'roll ' + (showSec + rollSec) * obj.children.length + 's linear 0s infinite normal';
+	var oStyle = document.createElement('style');
+	document.head.appendChild(oStyle);
+	oStyle.sheet.insertRule('@-webkit-keyframes roll{' + sFrames + '}', 0);
+}
+</script>
+</head>
+<body>
+	<div id="container"></div>
+</body>
+<script>
+	roll3D(document.getElementById('container'), 6, 1, 1, true);
+</script>
+</html>
