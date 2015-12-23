@@ -44,7 +44,6 @@ gulp.task('markdown', ['config', 'css', 'script'], function () {
 			locals: opt,
 			pretty: true
 		}))
-		.pipe(covertTo("anchor"))
 		.pipe(gulp.dest('./target/html/'))
 		.pipe(connect.reload());
 });

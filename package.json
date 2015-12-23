@@ -8,8 +8,8 @@
   "description": "批量转换markdown文件，嵌套自定义jade模板并生成网页",
   "main": "gulpfile.js",
   "dependencies": {
-    "gulp": "^3.8.6",
-    "gulp-util": "^3.0.0"
+    "gulp-util": "^3.0.7",
+    "gulp": "^3.8.6"
   },
   "devDependencies": {
     "clean-css": "^2.2.16",
